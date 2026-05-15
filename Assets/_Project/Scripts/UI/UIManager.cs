@@ -10,59 +10,90 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject losePanel;
     [SerializeField] private StarDisplay winStars;
     [SerializeField] private TMP_Text levelLabel;
+    [SerializeField] private TMP_Text goldLabel;
+    [SerializeField] private TMP_Text rewardLabel;
+    [SerializeField] private Slider progressBar;
     [SerializeField] private Button tapToStartButton;
     [SerializeField] private Button retryButton;
     [SerializeField] private Button nextButton;
 
-    private GameManager subscribed;
+    private GameManager subscribedGm;
+    private GoldManager subscribedGold;
+    private int goldBeforeWin;
 
     private void Start()
     {
-        if (GameManager.Instance != null)
-        {
-            Subscribe(GameManager.Instance);
-        }
+        if (GameManager.Instance != null) SubscribeGm(GameManager.Instance);
+        if (GoldManager.Instance != null) SubscribeGold(GoldManager.Instance);
 
         if (tapToStartButton != null) tapToStartButton.onClick.AddListener(OnTapToStart);
         if (retryButton != null) retryButton.onClick.AddListener(OnRetry);
         if (nextButton != null) nextButton.onClick.AddListener(OnNext);
 
+        UpdateLevelLabel();
         ShowOnly(mainMenuPanel);
     }
 
     private void OnDestroy()
     {
-        if (subscribed != null) Unsubscribe(subscribed);
+        if (subscribedGm != null) UnsubscribeGm(subscribedGm);
+        if (subscribedGold != null) subscribedGold.OnGoldChanged -= HandleGoldChanged;
     }
 
-    private void Subscribe(GameManager gm)
+    private void Update()
+    {
+        if (progressBar != null && LevelProgress.Instance != null)
+        {
+            progressBar.value = LevelProgress.Instance.Progress01;
+        }
+    }
+
+    private void SubscribeGm(GameManager gm)
     {
         gm.OnGameStart += HandleGameStart;
         gm.OnGameWin += HandleGameWin;
         gm.OnGameLose += HandleGameLose;
-        subscribed = gm;
+        subscribedGm = gm;
     }
 
-    private void Unsubscribe(GameManager gm)
+    private void UnsubscribeGm(GameManager gm)
     {
         gm.OnGameStart -= HandleGameStart;
         gm.OnGameWin -= HandleGameWin;
         gm.OnGameLose -= HandleGameLose;
     }
 
+    private void SubscribeGold(GoldManager gm)
+    {
+        gm.OnGoldChanged += HandleGoldChanged;
+        subscribedGold = gm;
+        HandleGoldChanged(gm.Gold);
+    }
+
     private void HandleGameStart()
     {
+        goldBeforeWin = GoldManager.Instance != null ? GoldManager.Instance.Gold : 0;
+        UpdateLevelLabel();
         ShowOnly(hudPanel);
-        if (levelLabel != null) levelLabel.text = "Level";
     }
 
     private void HandleGameWin(int stars)
     {
         ShowOnly(winPanel);
         if (winStars != null) winStars.SetStars(stars);
+        if (rewardLabel != null && GoldManager.Instance != null)
+        {
+            int delta = GoldManager.Instance.Gold - goldBeforeWin;
+            rewardLabel.text = $"+{delta}";
+        }
     }
 
     private void HandleGameLose() => ShowOnly(losePanel);
+
+    private void HandleGoldChanged(int gold)
+    {
+        if (goldLabel != null) goldLabel.text = gold.ToString();
+    }
 
     private void OnTapToStart() => GameManager.Instance?.StartGame();
 
@@ -70,6 +101,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance?.ResetToIdle();
         LevelManager.Instance?.ReloadCurrent();
+        UpdateLevelLabel();
         ShowOnly(mainMenuPanel);
     }
 
@@ -77,7 +109,15 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance?.ResetToIdle();
         LevelManager.Instance?.LoadNext();
+        UpdateLevelLabel();
         ShowOnly(mainMenuPanel);
+    }
+
+    private void UpdateLevelLabel()
+    {
+        if (levelLabel == null) return;
+        int idx = LevelManager.Instance != null ? LevelManager.Instance.CurrentIndex : 0;
+        levelLabel.text = $"Level {idx + 1}";
     }
 
     private void ShowOnly(GameObject panel)

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,10 +34,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (State == GameState.Idle && Input.GetKeyDown(KeyCode.S))
-        {
-            StartGame();
-        }
+        if (State != GameState.Idle) return;
+        var kb = Keyboard.current;
+        if (kb != null && kb.sKey.wasPressedThisFrame) StartGame();
     }
 
     public void StartGame()

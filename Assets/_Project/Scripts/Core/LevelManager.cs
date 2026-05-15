@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private LevelDatabase database;
     [SerializeField] private int startIndex;
     [SerializeField] private PickerController picker;
+    [SerializeField] private Vector3 pickerSpawnPosition;
 
     private GameObject currentLevelInstance;
     private int currentIndex = -1;
@@ -51,7 +52,19 @@ public class LevelManager : MonoBehaviour
         }
 
         if (picker != null && CurrentLevelData != null)
+        {
             picker.MoveSpeed = CurrentLevelData.pickerSpeed;
+            picker.transform.position = pickerSpawnPosition;
+            picker.SyncTargetToCurrent();
+        }
+
+        if (LevelProgress.Instance != null && picker != null && CurrentLevelData != null)
+        {
+            LevelProgress.Instance.Configure(
+                picker.transform,
+                CurrentLevelData.progressStartZ,
+                CurrentLevelData.progressEndZ);
+        }
     }
 
     public void ReloadCurrent()

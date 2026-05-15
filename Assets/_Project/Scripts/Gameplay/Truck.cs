@@ -5,6 +5,7 @@ public class Truck : MonoBehaviour
     [SerializeField] private float resolveDelay = 1.5f;
 
     public int CollectedCount { get; private set; }
+    public int WeightedScore { get; private set; }
 
     private bool resolved;
     private float resolveTimer;
@@ -18,12 +19,16 @@ public class Truck : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (resolved) return;
-        if (other.CompareTag("Collectible"))
-        {
-            CollectedCount++;
-            resolveTimer = resolveDelay;
-            collecting = true;
-        }
+        if (!other.CompareTag("Collectible")) return;
+
+        CollectedCount++;
+
+        var c = other.GetComponentInParent<Collectible>();
+        int mult = c != null ? Mathf.Max(1, c.Multiplier) : 1;
+        WeightedScore += mult;
+
+        resolveTimer = resolveDelay;
+        collecting = true;
     }
 
     private void Update()
@@ -33,18 +38,17 @@ public class Truck : MonoBehaviour
         if (GameManager.Instance.State != GameManager.GameState.Playing) return;
 
         resolveTimer -= Time.deltaTime;
-        if (resolveTimer <= 0f)
-        {
-            ResolveWin();
-        }
+        if (resolveTimer <= 0f) ResolveWin();
     }
 
     private void ResolveWin()
     {
         resolved = true;
         int stars = CalculateStars();
+        int gold = CalculateGold();
+        GoldManager.Instance?.Add(gold);
         GameManager.Instance?.Win(stars);
-        Debug.Log($"Truck: {CollectedCount} collected → {stars}★");
+        Debug.Log($"Truck: {CollectedCount} balls (weighted {WeightedScore}) → {stars}★, +{gold} gold");
     }
 
     private int CalculateStars()
@@ -56,5 +60,13 @@ public class Truck : MonoBehaviour
         if (CollectedCount >= data.twoStarFill) return 2;
         if (CollectedCount >= data.oneStarFill) return 1;
         return 0;
+    }
+
+    private int CalculateGold()
+    {
+        var data = LevelManager.Instance?.CurrentLevelData;
+        int baseGold = data != null ? data.baseGoldReward : 0;
+        int perBall = data != null ? data.perBallGold : 0;
+        return baseGold + WeightedScore * perBall;
     }
 }

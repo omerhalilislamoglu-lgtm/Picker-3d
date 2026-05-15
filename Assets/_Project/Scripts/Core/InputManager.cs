@@ -5,7 +5,8 @@ public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
 
-    [SerializeField] private float sensitivity = 0.02f;
+    [SerializeField] private float lateralRange = 5f;
+    [SerializeField] private float deadZonePixels = 2f;
 
     public float HorizontalDelta { get; private set; }
     public bool IsPointerDown { get; private set; }
@@ -28,14 +29,16 @@ public class InputManager : MonoBehaviour
         HorizontalDelta = 0f;
 
         var pointer = Pointer.current;
-        if (pointer == null) return;
+        if (pointer == null)
+        {
+            IsPointerDown = false;
+            wasDown = false;
+            return;
+        }
 
         bool isDown = false;
-
-        if (Mouse.current != null)
-            isDown = Mouse.current.leftButton.isPressed;
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
-            isDown = true;
+        if (Mouse.current != null) isDown = Mouse.current.leftButton.isPressed;
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed) isDown = true;
 
         IsPointerDown = isDown;
         Vector2 current = pointer.position.ReadValue();
@@ -46,9 +49,13 @@ public class InputManager : MonoBehaviour
         }
         else if (isDown)
         {
-            float dx = (current.x - lastPointerPos.x) * sensitivity;
-            HorizontalDelta = dx;
-            lastPointerPos = current;
+            float rawDx = current.x - lastPointerPos.x;
+            if (Mathf.Abs(rawDx) >= deadZonePixels)
+            {
+                float screenW = Mathf.Max(1f, Screen.width);
+                HorizontalDelta = (rawDx / screenW) * lateralRange;
+                lastPointerPos = current;
+            }
         }
 
         wasDown = isDown;
