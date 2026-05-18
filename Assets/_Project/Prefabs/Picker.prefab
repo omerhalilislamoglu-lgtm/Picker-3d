@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 2365750217469158185}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 2}
-  m_LocalScale: {x: 0.2, y: 1.2, z: 1.5}
+  m_LocalPosition: {x: 0.475, y: 2.32, z: -0}
+  m_LocalScale: {x: 0.05, y: 4.0913553, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 204588266029409841}
@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b0f8b47bef12f124199fced5d88e0d43, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -140,8 +140,8 @@ Transform:
   m_GameObject: {fileID: 6468274027329743394}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 2}
-  m_LocalScale: {x: 0.2, y: 1.2, z: 1.5}
+  m_LocalPosition: {x: -0.4752, y: 2.32, z: -0}
+  m_LocalScale: {x: 0.05, y: 4.091355, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 204588266029409841}
@@ -179,7 +179,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b0f8b47bef12f124199fced5d88e0d43, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -238,7 +238,6 @@ GameObject:
   - component: {fileID: 126518958766623514}
   - component: {fileID: 6682243257363886737}
   - component: {fileID: 2541622362688490683}
-  - component: {fileID: 2124092510254455590}
   m_Layer: 0
   m_Name: Picker
   m_TagString: Player
@@ -254,15 +253,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6727032124783951577}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 2}
-  m_LocalScale: {x: 3, y: 0.3, z: 0.5}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.6539, z: 2.384}
+  m_LocalScale: {x: 3, y: 0.43501, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6034152803998199483}
   - {fileID: 8140698331131402396}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &3313040457974050414
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -296,7 +295,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b0f8b47bef12f124199fced5d88e0d43, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -383,15 +382,3 @@ MonoBehaviour:
   moveSpeed: 5
   halfTrackWidth: 2.5
   lateralLerp: 18
---- !u!114 &2124092510254455590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6727032124783951577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d907aa409d7140d45bd6d54090a57f22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PickerCollector

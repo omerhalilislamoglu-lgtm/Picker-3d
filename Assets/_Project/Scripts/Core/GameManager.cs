@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
     {
         if (State != GameState.Idle) return;
         var kb = Keyboard.current;
-        if (kb != null && kb.sKey.wasPressedThisFrame) StartGame();
+        bool keyStart = kb != null && kb.sKey.wasPressedThisFrame;
+        bool tapStart = Pointer.current != null && Pointer.current.press.wasPressedThisFrame;
+        if (keyStart || tapStart) StartGame();
     }
 
     public void StartGame()

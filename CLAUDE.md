@@ -25,7 +25,7 @@ Assets/
     Scripts/
       Core/       (GameManager, LevelManager, InputManager, CameraFollow,
                    MobileBootstrap, GoldManager, LevelProgress)
-      Player/     (PickerController, PickerCollector)
+      Player/     (PickerController)
       Gameplay/   (Collectible, Gate, FailZone, EndRamp,
                    MultiplierRamp, RotatingObstacle, Truck)
       Data/       (LevelData, LevelDatabase — ScriptableObject'ler)
@@ -53,14 +53,16 @@ Assets/
 
 ## Faz Durumu
 - [x] Faz 0 — Proje temeli: klasörler, tag/layer'lar, git push tamam.
-- [x] Faz 1 — Tüm Core scriptleri v2 hazır. Editor: `Game.unity` sahnesinde 6 manager objesi mevcut (GameManager, LevelManager, InputManager, **MobileBootstrap**, **GoldManager**, **LevelProgress**). Main Camera'da `CameraFollow` ekli. Play modunda Idle → S tuşu → Playing testi başarılı. ⚠️ **Input System fix uygulandı:** `GameManager.cs` artık `Keyboard.current.sKey.wasPressedThisFrame` kullanıyor (eski `Input.GetKeyDown` patlıyordu); `MobileBootstrap.cs`'den `Input.multiTouchEnabled = false` satırı kaldırıldı.
-- [x] Faz 2 — Player scriptleri v2 hazır. Editor: `Picker` prefab oluşturuldu (`Assets/_Project/Prefabs/Picker.prefab`); ana Cube (3, 0.3, 0.5) + `KanatSol` ve `KanatSag` child Cube'leri (U şekli). Rigidbody + `PickerController` + `PickerCollector` ekli, Tag=Player. Sahnede `Ground` plane (scale 1×1×6, z=30). LevelManager'da `picker` field'ı + `pickerSpawnPosition (0, 0.5, 2)` ayarlı. Main Camera CameraFollow target = Picker. Play testi: ileri kayma + kamera takip + mouse drag yatay hareket — hepsi çalışıyor.
-- [ ] Faz 3 — Gameplay scriptleri v2 hazır (Collectible+Multiplier, Gate+barrier drop, FailZone, EndRamp, MultiplierRamp, RotatingObstacle, Truck+gold). **Prefab kurulumu başlamadı.** Yapılacaklar: Collectible (Sphere+Rigidbody), Gate (TriggerBox+Barrier+TMP Label, script TriggerBox'a eklenmeli!), Truck (TriggerBox+TruckVisual), FailZone, RotatingObstacle (iki çapraz kanat), MultiplierRamp (3 zone: x2/x3/x5). Hepsi `Assets/_Project/Prefabs/` altına kaydedilecek, hierarchy'den temizlenecek.
+- [x] Faz 1 — Tüm Core scriptleri v2 hazır. Editor: `Game.unity` sahnesinde 6 manager objesi mevcut (GameManager, LevelManager, InputManager, **MobileBootstrap**, **GoldManager**, **LevelProgress**). Main Camera'da `CameraFollow` ekli. ⚠️ **Input System fix uygulandı:** `GameManager.cs` `Keyboard.current.sKey.wasPressedThisFrame` **VEYA** `Pointer.current.press.wasPressedThisFrame` (S tuşu + mouse/touch tap-to-start). MobileBootstrap'tan `Input.multiTouchEnabled = false` satırı kaldırıldı. **Editor not:** Unity 6'nın `SceneViewMotion.WalkBackward/Left` shortcut'ları bug'lı (NullRef) — Edit → Shortcuts → "Walk" araması yapıp `Scene View / Walk *` binding'lerini temizle.
+- [x] Faz 2 — Player scriptleri v2 hazır. Editor: `Picker` prefab oluşturuldu (`Assets/_Project/Prefabs/Picker.prefab`); ana Cube **(3, 1, 0.5)** + `KanatSol` (-0.45, 0.6, 0) ve `KanatSag` (+0.45, 0.6, 0), scale (0.05, 0.4, 1) — U / kar-küreyici şekli. Rigidbody + `PickerController` ekli, Tag=Player. Sahnede `Ground` plane (scale 1×1×6, z=30). LevelManager'da `picker` field'ı + `pickerSpawnPosition (0, 0.5, 2)` ayarlı. Main Camera: **Rotation (30, 0, 0)**, X=0, CameraFollow target = Picker, offset (0, 6, -7). Play testi: ileri kayma + kamera takip + mouse drag yatay hareket — hepsi çalışıyor.
+- [ ] Faz 3 — Gameplay scriptleri v2 hazır (Collectible+Multiplier, Gate+barrier drop, FailZone, EndRamp, MultiplierRamp, RotatingObstacle, Truck+gold). **Prefab kurulumu:** 3.1 Collectible ✅ (Sphere scale 0.6, SphereCollider r=0.5, RB gravity+continuous, Tag=Collectible, Layer 7, Collectible_Yellow.mat atalı). 3.2 Gate ✅ (root: BoxCollider isTrigger 5×2×1 center(0,1,0) + Gate script, requiredCount=5; children: Post_Left/Post_Right direkler, Barrier 4.6×2×0.2 Layer=Wall, LabelCanvas WorldSpace TMP "0/5"; label & barrier referansları atalı). **3.3 Truck %90 tamam** ama HOTFIX bekliyor: ilk versiyonda cargo y=1'deydi, toplar altından geçti. Yapılacak: Cargo_Floor y=0.1'e indir + BoxCollider ekle (Is Trigger off); Cargo_WallLeft/Right/Back y=0.95'e indir + BoxCollider'lar ekle (Is Trigger off). Cabin değişmesin. Prefab'ı kaydet, sahnede 5 collectible ile test et — toplar kasada birikmeli. Bu hotfix bittikten sonra Faz 3.3 ✅. Kalan: 3.4 FailZone, 3.5a RotatingObstacle (pervane), 3.5b PendulumObstacle yeni script (çekiç sallanması), 3.6 MultiplierRamp (3 zone: x2/x3/x5). Hepsi `Assets/_Project/Prefabs/` altına kaydedilecek, hierarchy'den temizlenecek.
 - [ ] Faz 4 — Data scriptleri v2 hazır (LevelData: gold/progress alanları). Level_01 prefab + LevelData + LevelDatabase asset oluşturulacak.
 - [ ] Faz 5 — UI scriptleri v2 hazır (UIManager: progress bar + gold + reward delta, StarDisplay). Canvas kurulumu yapılacak.
 - [ ] Faz 6 — Polish (CameraShake, particles, audio — opsiyonel)
 
-> **Sonraki sohbet için başlangıç noktası:** Faz 3.1 — Collectible prefab'ı oluştur (Sphere, scale 0.4, Rigidbody, Collectible script, Tag=Collectible, prefab'a kaydet, hierarchy'den sil). Sonra 3.2 Gate, 3.3 Truck, 3.4 FailZone, 3.5 RotatingObstacle, 3.6 MultiplierRamp. Detaylı adımlar önceki sohbette verildi; gerekirse tekrar üret.
+> **Sonraki sohbet için başlangıç noktası:** Faz 3.3 Truck **hotfix mini-bloğu** (yukarıdaki açıklamada detay). Project'te Truck.prefab'ı çift tıkla, prefab edit modunda Cargo_Floor + 3 duvarın Y pozisyonlarını düşür ve her birine BoxCollider (Is Trigger off) ekle. Test: 5 collectible ile play, toplar kasada birikmeli. Tamamsa 3.3 ✅, sonra 3.4 FailZone (yere serili büyük BoxCollider isTrigger, Tag=FailZone), 3.5a RotatingObstacle pervane prefab'ı, 3.5b PendulumObstacle yeni script + çekiç prefab'ı, 3.6 MultiplierRamp (3 zone: x2/x3/x5). Tüm gameplay prefab'ları bitince Faz 4'te Level_01 prefab'ı içinde düzenlenecek + LevelData/LevelDatabase asset'leri oluşturulacak.
+
+> **Vizyon notu (Faz 5'te bağlanacak gameflow):** A-şeması seçildi → Level boyunca 1-3 Gate + son Truck (yıldız+altın). UIManager'da otomatik geçiş: Win → 1.5s → next level; Lose → 1.5s → ReloadCurrent. Bu kod değişikliği Faz 5'te toplu yapılacak, şimdi UIManager'a dokunmuyoruz.
 
 ## Git & Repo
 - **GitHub:** https://github.com/omerhalilislamoglu-lgtm/Picker-3d
@@ -82,6 +84,7 @@ Assets/
 - Editor talimatları **numaralı liste** halinde, kısa ve net olsun. "Hierarchy'de sağ tık → Create Empty → adı 'GameManager'" gibi.
 - Inspector referans atama talimatı her zaman: "GameManager objesini seç → Inspector'da `levelManager` field'ına LevelManager objesini sürükle".
 - Bir fazı bitirmeden bir sonrakine geçme. Faz sonu kabul kriteri tatmin edilince devam et.
+- **Çalışma temposu — ÖNEMLİ:** Bir fazın alt-adımlarını (ör. Faz 3.3) tek mesajda 20 madde halinde verme. **Mikro-adımlar** halinde ilerle: bir mantıksal mini-blok (örn. "root oluştur + tag ata + collider ekle" → 3-5 madde) ver, kullanıcı uygulayıp "tamam" / "geçtim" / "sıradaki" deyince bir sonraki mini-bloğa geç. Hiyerarşi: Faz X → alt-adım X.Y → mini-blok 1, 2, 3 → her mini-blokta 3-5 numaralı talimat. Hata çıkarsa o mini-blokta dur, debug et, sonra ilerle.
 - Kodda gereksiz yorum yazma. WHY açıklaması gerekiyorsa tek satır yaz.
 - `using` blokları minimum olsun, sadece kullanılan namespace'ler.
 
